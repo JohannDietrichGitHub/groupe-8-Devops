@@ -20,5 +20,10 @@ class Groupe extends Model
     {
         return $this->hasMany(Question::class);
     }
+    public static function getGroupeNameById($id)
+    {
+        $groupe = Groupe::find($id);
+        return $groupe->nom;
+    }
 }
 
