@@ -22,25 +22,20 @@ jobs:
           docker build -t alpakagb/laravelapp:latest -f Dockerfile.prod .
           docker push alpakagb/laravelapp:latest
 
-      - name: Build and push Nginx image
-        env:
-          DOCKER_BUILDKIT: 1
+      - name: Push pre-built Nginx image
         run: |
-          docker build -t alpakagb/nginx:latest -f ./nginx/Dockerfile .
+          docker pull nginx:1.26.0-alpine
+          docker tag nginx:1.26.0-alpine alpakagb/nginx:latest
           docker push alpakagb/nginx:latest
 
-      - name: Build and push PHPMyAdmin image
-        env:
-          DOCKER_BUILDKIT: 1
+      - name: Push pre-built PHPMyAdmin image
         run: |
-          docker pull phpmyadmin/phpmyadmin:latest  # Pull latest PHPMyAdmin image
+          docker pull phpmyadmin/phpmyadmin:latest
           docker tag phpmyadmin/phpmyadmin:latest alpakagb/phpmyadmin:latest
           docker push alpakagb/phpmyadmin:latest
 
-      - name: Build and push MariaDB image
-        env:
-          DOCKER_BUILDKIT: 1
+      - name: Push pre-built MariaDB image
         run: |
-          docker pull mariadb:latest  # Pull latest MariaDB image
+          docker pull mariadb:latest
           docker tag mariadb:latest alpakagb/mariadb:latest
           docker push alpakagb/mariadb:latest
