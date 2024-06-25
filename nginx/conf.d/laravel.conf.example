@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name 172.16.47.23;
+    server_name localhost;
 
     root /var/www/public;
 
