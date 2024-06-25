@@ -20,5 +20,13 @@ class Question extends Model
     {
         return $this->hasMany(Reponse::class);
     }
+    public static function getScoreByQuestionIdAndEntrepriseId($questionId, $entrepriseId)
+    {
+        $reponse = Reponse::where('question_id', $questionId)
+            ->where('entreprise_id', $entrepriseId)
+            ->first();
+
+        return $reponse->score;
+    }
 }
 
