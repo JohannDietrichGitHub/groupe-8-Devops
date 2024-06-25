@@ -17,26 +17,16 @@ class ResultController extends Controller
         $entreprise = Entreprise::find($id);
         $nom = $entreprise->nom;
 
-        $groupesComp = $this->getGroupesByCategory('competence');
+        $groupesComp = Groupe::getGroupesByCategory('competence');
         $questionsGroupeComp = $this->getQuestionsByGroup($groupesComp);
 
-        $groupesReact = $this->getGroupesByCategory('reactivite');
+        $groupesReact = Groupe::getGroupesByCategory('reactivite');
         $questionsGroupeReact = $this->getQuestionsByGroup($groupesReact);
 
-        $groupesNum = $this->getGroupesByCategory('numerique');
+        $groupesNum = Groupe::getGroupesByCategory('numerique');
         $questionsGroupeNum = $this->getQuestionsByGroup($groupesNum);
 
         return view('results', ['id' => $id, 'title' => $nom, 'questionsComp' => $questionsGroupeComp, 'questionsReact' => $questionsGroupeReact, 'questionsNum' => $questionsGroupeNum]);
-    }
-
-    private function getGroupesByCategory($categorieNom)
-    {
-        $categorie = Categorie::where('nom', $categorieNom)->first();
-        $categorieId = $categorie->id;
-
-        $groupes = Groupe::where('categorie_id', $categorieId)->get();
-
-        return $groupes;
     }
 
     private function getQuestionsByGroup($groupesComp)
