@@ -1,0 +1,46 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main  # Déclencher uniquement sur les pushs vers la branche main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        run: echo ${{ secrets.DOCKER_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Build and push Laravel App image
+        env:
+          DOCKER_BUILDKIT: 1  # Utilisation de BuildKit pour Docker Build (optionnel mais recommandé)
+        run: |
+          docker build -t alpakagb/laravelapp:latest -f Dockerfile.prod .
+          docker push alpakagb/laravelapp:latest
+
+      - name: Build and push Nginx image
+        env:
+          DOCKER_BUILDKIT: 1
+        run: |
+          docker build -t alpakagb/nginx:latest -f ./nginx/Dockerfile .
+          docker push alpakagb/nginx:latest
+
+      - name: Build and push PHPMyAdmin image
+        env:
+          DOCKER_BUILDKIT: 1
+        run: |
+          docker pull phpmyadmin/phpmyadmin:latest  # Pull latest PHPMyAdmin image
+          docker tag phpmyadmin/phpmyadmin:latest alpakagb/phpmyadmin:latest
+          docker push alpakagb/phpmyadmin:latest
+
+      - name: Build and push MariaDB image
+        env:
+          DOCKER_BUILDKIT: 1
+        run: |
+          docker pull mariadb:latest  # Pull latest MariaDB image
+          docker tag mariadb:latest alpakagb/mariadb:latest
+          docker push alpakagb/mariadb:latest
