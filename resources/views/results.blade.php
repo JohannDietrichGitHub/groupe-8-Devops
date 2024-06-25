@@ -32,76 +32,65 @@
     </style>
 </head>
 <body>
+<div class="container">
+    <h1>Résultats de l'entreprise : {{$title}} avec id {{$id}}</h1>
 
-<h1>Résultats de l'entreprise : {{$title}} avec id {{$id}}</h1>
-<h1>Axe compétences</h1>
-<!-- Boucle pour afficher les questions -->
-<table>
-    <tr>
-        <th>Items</th>
-        <th>Questionnements</th>
-        <th class="score">Score</th>
-    </tr>
-    @php $previousGroupeId = null; @endphp
-    @foreach ($questionsComp as $index => $question)
-        @if ($question['groupe_id'] != $previousGroupeId)
-            <tr>
-                <td>{{ \App\Models\Groupe::getGroupeNameById($question['groupe_id'])}}</td>
-            @php $previousGroupeId = $question['groupe_id']; @endphp
-        @else
-            <tr>
-                <td></td>
-                @endif
-                <td>{{ $question['texte'] }}</td>
-                <td class="score">{{ \App\Models\Question::getScoreByQuestionIdAndEntrepriseId($question['id'], $id) }}</td>
-            </tr>
-            @endforeach
-</table>
+    @php
+        function renderQuestionsTable($questions, $axeName, $id) {
+            $previousGroupeId = null;
+            echo '<h1>' . $axeName . '</h1>';
+            echo '<table>';
+            echo '<tr>';
+            echo '<th>Items</th>';
+            echo '<th>Questionnements</th>';
+            echo '<th class="score">Score</th>';
+            echo '</tr>';
+            foreach ($questions as $question) {
+                if ($question['groupe_id'] != $previousGroupeId) {
+                    echo '<tr>';
+                    echo '<td>' . \App\Models\Groupe::getGroupeNameById($question['groupe_id']) . '</td>';
+                    $previousGroupeId = $question['groupe_id'];
+                } else {
+                    echo '<tr>';
+                    echo '<td></td>';
+                }
+                echo '<td>' . $question['texte'] . '</td>';
+                echo '<td class="score">' . \App\Models\Question::getScoreByQuestionIdAndEntrepriseId($question['id'], $id) . '</td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+        }
 
-<h1>Axe réactivité</h1>
-<table>
-    <tr>
-        <th>Items</th>
-        <th>Questionnements</th>
-        <th class="score">Score</th>
-    </tr>
-    @php $previousGroupeId = null; @endphp
-    @foreach ($questionsReact as $index => $question)
-        @if ($question['groupe_id'] != $previousGroupeId)
-            <tr>
-                <td>{{ \App\Models\Groupe::getGroupeNameById($question['groupe_id'])}}</td>
-            @php $previousGroupeId = $question['groupe_id']; @endphp
-        @else
-            <tr>
-                <td></td>
-                @endif
-                <td>{{ $question['texte'] }}</td>
-                <td class="score">{{ \App\Models\Question::getScoreByQuestionIdAndEntrepriseId($question['id'], $id) }}</td>
-            </tr>
-            @endforeach
-</table>
+        function renderBilanTable($category, $id) {
+            $groupes = \App\Models\Groupe::getGroupesByCategory($category);
+            echo '<h1>Bilan ' . ucfirst($category) . ' :</h1>';
+            echo '<table>';
+            echo '<thead>';
+            echo '<tr>';
+            echo '<th>Groupe</th>';
+            echo '<th>Total Score</th>';
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+            foreach ($groupes as $groupe) {
+                echo '<tr>';
+                echo '<td>' . $groupe->nom . '</td>';
+                echo '<td>' . \App\Models\Groupe::getTotalScoreByGroupeIdAndEntrepriseId($groupe->id, $id) . '</td>';
+                echo '</tr>';
+            }
+            echo '</tbody>';
+            echo '</table>';
+        }
+    @endphp
 
-<h1>Axe numérique</h1>
-<table>
-    <tr>
-        <th>Items</th>
-        <th>Questionnements</th>
-        <th class="score">Score</th>
-    </tr>
-    @php $previousGroupeId = null; @endphp
-    @foreach ($questionsNum as $index => $question)
-        @if ($question['groupe_id'] != $previousGroupeId)
-            <tr>
-                <td>{{ \App\Models\Groupe::getGroupeNameById($question['groupe_id'])}}</td>
-            @php $previousGroupeId = $question['groupe_id']; @endphp
-        @else
-            <tr>
-                <td></td>
-                @endif
-                <td>{{ $question['texte'] }}</td>
-                <td class="score">{{ \App\Models\Question::getScoreByQuestionIdAndEntrepriseId($question['id'], $id) }}</td>
-            </tr>
-            @endforeach
-</table>
+    @php renderQuestionsTable($questionsComp, 'Axe compétences', $id); @endphp
+    @php renderBilanTable('competence', $id); @endphp
+
+    @php renderQuestionsTable($questionsReact, 'Axe réactivité', $id); @endphp
+    @php renderBilanTable('reactivite', $id); @endphp
+
+    @php renderQuestionsTable($questionsNum, 'Axe numérique', $id); @endphp
+    @php renderBilanTable('numerique', $id); @endphp
+</div>
 </body>
 </html>
