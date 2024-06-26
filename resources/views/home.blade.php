@@ -4,6 +4,6 @@
 
 @include('partials.header')
 <body>
-<h1>Formulaire</h1>
+<h1>Ceci est la page principale</h1>
 </body>
 @include('partials.footer')
