@@ -24,6 +24,8 @@ services:
       context: .
       dockerfile: Dockerfile.prod.nginx
     container_name: nginx
+    volumes:
+      - ./:/var/www
     ports:
       - "8081:80"
     depends_on:
