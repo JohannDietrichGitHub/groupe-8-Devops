@@ -13,10 +13,10 @@ until nc -z -v -w30 db 3306; do
 done
 
 php artisan migrate
-php artisan db:seed --class=CategoriesSeeder
-php artisan db:seed --class=EntreprisesSeeder
-php artisan db:seed --class=GroupesSeeder
-php artisan db:seed --class=QuestionsSeeder
-php artisan db:seed --class=ReponsesSeeder
+#php artisan db:seed --class=CategoriesSeeder
+#php artisan db:seed --class=EntreprisesSeeder
+#php artisan db:seed --class=GroupesSeeder
+#php artisan db:seed --class=QuestionsSeeder
+#php artisan db:seed --class=ReponsesSeeder
 
 exec php-fpm
