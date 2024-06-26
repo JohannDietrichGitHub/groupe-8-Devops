@@ -9,8 +9,8 @@ services:
       - laravel
     env_file:
       - .env
-    # environment:
-      # - NODE_ENV=production
+    environment:
+      - NODE_ENV=production
     depends_on:
       - db
     healthcheck:
