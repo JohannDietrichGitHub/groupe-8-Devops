@@ -9,4 +9,5 @@ Route::get('/', function () {
 Route::get('/static', function () {
     return view('static');
 });
-Route::get('/results/{id}', [ResultController::class, 'show']); // Utilisation de la syntaxe de tableau
+Route::get('/results/{id}', [ResultController::class, 'show']);
+Route::get('/form', [FormController::class, 'show']);
