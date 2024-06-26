@@ -1,12 +1,12 @@
-name: Run Tests
+name: Laravel Tests
 
 on:
   push:
     branches:
-      - main
+      - main  # Déclencher les tests sur le push vers la branche main
   pull_request:
     branches:
-      - main
+      - main  # Déclencher les tests sur les pull requests vers la branche main
 
 jobs:
   test:
@@ -14,19 +14,15 @@ jobs:
 
     services:
       mysql:
-        image: mariadb:latest
+        image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: laravel
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
+          MYSQL_USER: laravel
+          MYSQL_PASSWORD: laravel
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost -u user -ppassword || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout repository
@@ -35,94 +31,14 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
-          extensions: mbstring, intl, bcmath, gd, mysqli, pdo_mysql
-          coverage: none
+          php-version: '8.3'  # Changer à la version PHP utilisée dans ton projet
 
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
-
-      - name: Install npm dependencies
-        run: npm install
-
-      - name: Copy .env.example to .env
-        run: cp .env.example .env
-
-      - name: Copy laravel.conf.example to laravel.conf
-        run: cp nginx/conf.d/laravel.conf.example nginx/conf.d/laravel.conf
-
-      - name: Generate application key
-        run: php artisan key:generate
-
-      - name: Wait for MySQL to be ready
-        run: dockerize -wait tcp://mysql:3306 -timeout 1m
-
-      - name: Run migrations
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: laravel
-          DB_USERNAME: user
-          DB_PASSWORD: password
-        run: php artisan migrate --force
-
-      - name: Run seeder category
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: laravel
-          DB_USERNAME: user
-          DB_PASSWORD: password
-        run: php artisan db:seed --class=CategoriesSeeder
-
-      - name: Run seeder entreprise
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: laravel
-          DB_USERNAME: user
-          DB_PASSWORD: password
-        run: php artisan db:seed --class=EntreprisesSeeder
-
-      - name: Run seeder groups
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: laravel
-          DB_USERNAME: user
-          DB_PASSWORD: password
-        run: php artisan db:seed --class=GroupesSeeder
-
-      - name: Run seeder questions
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: laravel
-          DB_USERNAME: user
-          DB_PASSWORD: password
-        run: php artisan db:seed --class=QuestionsSeeder
-
-      - name: Run seeder response
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: laravel
-          DB_USERNAME: user
-          DB_PASSWORD: password
-        run: php artisan db:seed --class=ReponsesSeeder
+      - name: Install dependencies
+        run: |
+          cp .env.example .env
+          composer install --no-ansi --no-interaction --no-progress --no-scripts --optimize-autoloader
+          php artisan key:generate
+          php artisan config:cache
 
       - name: Run tests
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: laravel
-          DB_USERNAME: user
-          DB_PASSWORD: password
         run: php artisan test
