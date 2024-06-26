@@ -1,0 +1,7 @@
+FROM nginx:1.26.0-alpine
+
+# Copier la configuration Nginx
+COPY nginx/conf.d/laravel.conf /etc/nginx/conf.d/laravel.conf
+
+# Supprimer la configuration par défaut si nécessaire
+RUN rm /etc/nginx/conf.d/default.conf
