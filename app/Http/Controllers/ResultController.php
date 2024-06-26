@@ -26,7 +26,7 @@ class ResultController extends Controller
         $groupesNum = Groupe::getGroupesByCategory('numerique');
         $questionsGroupeNum = $this->getQuestionsByGroup($groupesNum);
 
-        return view('results', ['id' => $id, 'title' => $nom, 'questionsComp' => $questionsGroupeComp, 'questionsReact' => $questionsGroupeReact, 'questionsNum' => $questionsGroupeNum]);
+        return view('results', ['titre' => 'Résultats', 'id' => $id, 'title' => $nom, 'questionsComp' => $questionsGroupeComp, 'questionsReact' => $questionsGroupeReact, 'questionsNum' => $questionsGroupeNum]);
     }
 
     private function getQuestionsByGroup($groupesComp)
