@@ -24,4 +24,6 @@ COPY init.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/init.sh
 
+COPY /nginx/conf.d/laravel.conf /etc/nginx/conf.d/
+
 CMD ["sh", "/usr/local/bin/init.sh"]
