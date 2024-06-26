@@ -5,7 +5,7 @@
 /public/storage
 /storage/*.key
 /vendor
-# .env
+ .env
 .env.backup
 .env.production
 .phpactor.json
@@ -19,4 +19,4 @@ yarn-error.log
 /.idea
 /.vscode
 .idea/
-# /nginx/conf.d/laravel.conf
+ /nginx/conf.d/laravel.conf
