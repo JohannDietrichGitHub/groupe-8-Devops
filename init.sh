@@ -2,8 +2,8 @@
 
 # cp .env.example .env
 # cp nginx/conf.d/laravel.conf.example nginx/conf.d/laravel.conf
-composer install
-npm install
+# composer install
+# npm install
 chown -R www-data:www-data /var/www
 
 # Attendre que la base de données soit prête
