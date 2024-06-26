@@ -10,20 +10,20 @@ services:
     env_file:
       - .env
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro  # Montage du fichier de configuration Nginx
+      - .:/var/www  # Montage du code de l'application Laravel
     networks:
       - laravel
     depends_on:
       - db
-    ports:
-      - "8081:80"  # Port pour accéder à l'application via Nginx
 
   webserver:
     image: nginx:1.26.0-alpine
     container_name: nginx_prod
     restart: unless-stopped
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro  # Montage du fichier de configuration Nginx
+      - .:/var/www:ro  # Montage du code de l'application Laravel en lecture seule
     networks:
       - laravel
     ports:
