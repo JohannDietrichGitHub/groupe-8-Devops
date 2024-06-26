@@ -5,37 +5,34 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    container_name: laravel_app
-    working_dir: /var/www
+    container_name: laravel_app_prod
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
     networks:
       - laravel
-    environment:
-      - NODE_ENV=production
     depends_on:
       - db
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+    ports:
+      - "8081:80"  # Port pour accéder à l'application via Nginx
 
   webserver:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod.nginx
-    container_name: nginx
-    ports:
-      - "8081:80"
-    depends_on:
-      - app
+    image: nginx:1.26.0-alpine
+    container_name: nginx_prod
+    restart: unless-stopped
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
     networks:
       - laravel
-    volumes:
-      - ./:/var/www # Assurez-vous que le code de l'application est monté dans le conteneur Nginx
+    ports:
+      - "8081:80"  # Port pour accéder à l'application via Nginx
 
   db:
     image: mariadb:latest
-    container_name: mariadb
+    container_name: mariadb_prod
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -43,26 +40,18 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - dbdata:/var/lib/mysql
-    ports:
-      - "3307:3306"
     networks:
       - laravel
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u ${DB_USERNAME} -p${DB_PASSWORD} || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
+    container_name: phpmyadmin_prod
+    restart: unless-stopped
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     ports:
       - "8082:80"
-    depends_on:
-      - db
     networks:
       - laravel
 
