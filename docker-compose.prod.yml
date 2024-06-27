@@ -54,6 +54,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    command: ["--log-bin=mysql-bin", "--binlog-format=ROW", "--server-id=1", "bash", "-c", "/etc/scripts/setup-master.sh"]
     restart: unless-stopped
 
   phpmyadmin:
@@ -68,7 +69,6 @@ services:
       - db
     networks:
       - laravel
-    command: ["--log-bin=mysql-bin", "--binlog-format=ROW", "--server-id=1", "bash", "-c", "/etc/scripts/setup-master.sh"]
     restart: unless-stopped
 
 networks:
