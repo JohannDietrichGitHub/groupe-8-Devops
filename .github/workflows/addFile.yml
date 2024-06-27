@@ -28,4 +28,4 @@ jobs:
           git commit -m "Add newfile.txt"
           git push origin ${{ github.head_ref }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_SECRET_TOKEN }}
