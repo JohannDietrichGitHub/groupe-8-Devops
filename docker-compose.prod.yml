@@ -44,7 +44,7 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - dbdata_master:/var/lib/mysql
-      - /etc/scripts:/etc/scripts
+      - etc/scripts:/etc/scripts
     ports:
       - "3307:3306"
     networks:
@@ -54,7 +54,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    command: ["--log-bin=mysql-bin", "--binlog-format=ROW", "--server-id=1", "--read-only=1", "chmod +x /etc/scripts/setup_master.sh", "bash /etc/scripts/setup_master.sh"]
+    command: ["sh", "-c", "chmod +x /etc/scripts/setup_master.sh && /etc/scripts/setup_master.sh --log-bin=mysql-bin --binlog-format=ROW --server-id=1 --read-only=1"]
     restart: unless-stopped
 
   phpmyadmin:

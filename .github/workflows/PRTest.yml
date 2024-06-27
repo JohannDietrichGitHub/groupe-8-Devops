@@ -47,7 +47,7 @@ jobs:
 
       - name: Debug API Response
         run: |
-          response=$(curl -s -H "Authorization: token ${{ secrets.MY_SECRET_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&sort=updated&direction=desc&per_page=100")
+          response=$(curl -s -H "Authorization: token ${{ secrets.PAT }}" "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&sort=updated&direction=desc&per_page=100")
           echo "$response"
           echo "$response" > response.json
 
@@ -123,7 +123,7 @@ jobs:
 
           # Mettre à jour le titre de la PR via l'API GitHub
           curl -X PATCH \
-            -H "Authorization: token ${{ secrets.MY_SECRET_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.PAT }}" \
             -H "Content-Type: application/json" \
             -d "{\"title\": \"$new_title\"}" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/${pr_number}"
