@@ -10,3 +10,4 @@ parameters:
         - resources
     ignoreErrors:
         - '#Unsafe usage of new static#'
+        - '#Method .*::.*\(\) has no return type specified.#'
