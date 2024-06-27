@@ -43,7 +43,7 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - dbdata:/var/lib/mysql
+      - dbdata_slave:/var/lib/mysql
       - /etc/scripts:/etc/scripts
     ports:
       - "3307:3306"

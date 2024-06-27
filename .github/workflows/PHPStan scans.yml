@@ -1,4 +1,4 @@
-PHPStan scans
+name: PHPStan scans
 
 on:
   push:
