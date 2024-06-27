@@ -1,12 +1,11 @@
-name: Laravel Tests
+name: Laravel Run Tests
 
 on:
   push:
     branches:
       - main  # Déclencher les tests sur le push vers la branche main
   pull_request:
-    branches:
-      - main  # Déclencher les tests sur les pull requests vers la branche main
+    types: [opened, reopened, synchronize]
 
 jobs:
   test:

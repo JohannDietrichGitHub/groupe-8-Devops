@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main  # Déclencher uniquement sur les pushs vers la branche main
+  pull_request:
+    types: [opened, reopened, synchronize]
 
 jobs:
   build-and-push:
