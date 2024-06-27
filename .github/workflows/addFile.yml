@@ -11,14 +11,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Get current branch name
         id: branch-name
-        run: |
-          echo "${GITHUB_REF#refs/heads/}"  # Extrait le nom de la branche à partir de GITHUB_REF
-      
+        run: echo "${{ github.event.pull_request.head.ref }}"
+
       - name: Create a new file
         run: |
           echo "Hello, this is a new file" > newfile.txt
