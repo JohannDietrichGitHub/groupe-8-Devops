@@ -14,18 +14,23 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Set up Git user
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-
       - name: Create a new file
-        run: echo "Hello, this is a new file" > newfile.txt
-
-      - name: Commit and push changes
         run: |
-          git add newfile.txt
-          git commit -m "Add newfile.txt"
-          git push origin ${{ github.head_ref }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_SECRET_TOKEN }}
+          echo "Hello, this is a new file" > newfile.txt
+
+      - name: Get current branch name
+        id: branch-name
+        run: echo "::set-output name=branch::$(echo $GITHUB_REF | awk 'BEGIN {FS="/"} {print $3}')"
+      
+      - name: Commit new file using GitHub API
+        run: |
+          curl -X PUT \
+            -H "Authorization: token ${{ secrets.MY_SECRET_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/contents/newfile.txt \
+            -d '{
+              "message": "Add newfile.txt",
+              "content": "'"$(base64 newfile.txt)"'",
+              "branch": "${{ steps.branch-name.outputs.branch }}"
+            }'
+
