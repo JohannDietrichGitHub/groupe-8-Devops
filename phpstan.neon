@@ -15,6 +15,3 @@ parameters:
         - '#PHPDoc type array<int, string> of property .+ is not covariant with PHPDoc type list<string> of overridden property .+#'
         - '#Undefined variable: \$this#'
         - '#Call to method PHPUnit\\\\Framework\\\\Assert::assertTrue\(\) with true will always evaluate to true.#'
-
-        includes:
-    - vendor/nunomaduro/larastan/extension.neon
