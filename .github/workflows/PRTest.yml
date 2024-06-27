@@ -117,22 +117,5 @@ jobs:
             -H "Content-Type: application/json" \
             -d "{\"title\": \"$new_title\"}" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/${pr_number}"
-
-      - name: Set up Git
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-
-      - name: Check branches
-        run: |
-          git fetch --all
-          git branch -a
-
-      - name: Commit and push version file
-        run: |
-          echo "${{ steps.extract_version.outputs.version }}" > version.txt
-          git branch --list ${{ github.base_ref }}
-          git checkout ${{ github.base_ref }}
-          git add version.txt
           git commit -m "Update version to ${{ steps.extract_version.outputs.version }}"
           git push origin ${{ github.base_ref }}
