@@ -38,8 +38,6 @@ jobs:
       - name: Extract version from last PR title
         id: extract_version
         run: |
-          echo "GitHub Token: ${{ secrets.MY_GITHUB_TOKEN }}"
-          echo "GitHub Repository: ${{ github.repository }}"
           
           # Récupérer les titres des dernières pull requests fermées
           latest_pr_titles=$(curl -s -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&sort=updated&direction=desc&per_page=100" | jq -r '.[].title')
