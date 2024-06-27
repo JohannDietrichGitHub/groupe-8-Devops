@@ -41,7 +41,7 @@ jobs:
       - name: Extract version from last PR title
         id: extract_version
         run: |
-          latest_pr_data=$(curl -s -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" "https://api.github.com/repos/JohannDietrichGitHub/groupe-8-Devops/pulls?state=closed&sort=updated&direction=desc&per_page=100")
+          latest_pr_data=$(curl -s -H "Authorization: token ${{ secrets.MY_SECRET_TOKEN }}" "https://api.github.com/repos/JohannDietrichGitHub/groupe-8-Devops/pulls?state=closed&sort=updated&direction=desc&per_page=100")
           
           # Vérifier si la réponse est vide ou non
           if [[ -z "$latest_pr_data" ]]; then
@@ -122,7 +122,7 @@ jobs:
           
           # Mettre à jour le titre de la PR via l'API GitHub
           curl -X PATCH \
-            -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.MY_SECRET_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d "{\"title\": \"$new_title\"}" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/${pr_number}"

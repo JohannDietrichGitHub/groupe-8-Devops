@@ -1,6 +1,11 @@
-name: CI
+name: PHPStan scans
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main  # Déclencher les tests sur le push vers la branche main
+  pull_request:
+    types: [opened, reopened, synchronize]
 
 jobs:
   phpstan:

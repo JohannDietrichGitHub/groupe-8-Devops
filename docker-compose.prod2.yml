@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    container_name: laravel_app_master
+    container_name: laravel_app_slave
     working_dir: /var/www
     networks:
       - laravel
@@ -22,7 +22,7 @@ services:
 
   webserver:
     image: nginx:1.26.0-alpine
-    container_name: nginx_master
+    container_name: nginx_slave
     ports:
       - "8081:80"
     volumes:
@@ -36,14 +36,14 @@ services:
 
   db:
     image: mariadb:latest
-    container_name: mariadb_master
+    container_name: mariadb_slave
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - dbdata_master:/var/lib/mysql
+      - dbdata_slave:/var/lib/mysql
       - /etc/scripts:/etc/scripts
     ports:
       - "3307:3306"
@@ -58,7 +58,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin_master
+    container_name: phpmyadmin_slave
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
@@ -68,11 +68,11 @@ services:
       - db
     networks:
       - laravel
-    command: ["--log-bin=mysql-bin", "--binlog-format=ROW", "--server-id=1", "bash", "-c", "/etc/scripts/setup-master.sh"]
+    command: ["--log-bin=mysql-bin", "--binlog-format=ROW", "--server-id=2", "--read-only=1", "bash", "-c", "/etc/scripts/setup_slave.sh"]
     restart: unless-stopped
 
 networks:
   laravel:
 
 volumes:
-  dbdata_master:
+  dbdata_slave:
