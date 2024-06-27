@@ -38,14 +38,26 @@ jobs:
       - name: Extract version from last PR title
         id: extract_version
         run: |
+          echo "GitHub Token: ${{ secrets.MY_GITHUB_TOKEN }}"
+          echo "GitHub Repository: ${{ github.repository }}"
+          
+          # Récupérer les titres des dernières pull requests fermées
           latest_pr_titles=$(curl -s -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&sort=updated&direction=desc&per_page=100" | jq -r '.[].title')
+      
+          # Déclarer la variable pour stocker la version extraite
           version=""
+      
+          # Parcourir les titres des pull requests
           for title in $latest_pr_titles; do
+            # Utiliser une expression régulière pour extraire la version au format X.Y.Z
             version=$(echo "$title" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+            # Si une version est trouvée, sortir de la boucle
             if [[ ! -z "$version" ]]; then
               break
             fi
           done
+
+          # Si aucune version n'est trouvée, définir une version par défaut
           if [[ -z "$version" ]]; then
             version="1.0.0"
           fi
