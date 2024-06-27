@@ -54,7 +54,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    command: ["--log-bin=mysql-bin", "--binlog-format=ROW", "--server-id=2", "sh", "-c", "chmod +x /etc/scripts/setup-slave.sh && /etc/scripts/setup-slave.sh"]
+    command: ["--log-bin=mysql-bin", "--binlog-format=ROW", "--server-id=2", "sh", "chmod +x /etc/scripts/setup-slave.sh && /etc/scripts/setup-slave.sh"]
     restart: unless-stopped
 
   phpmyadmin:
