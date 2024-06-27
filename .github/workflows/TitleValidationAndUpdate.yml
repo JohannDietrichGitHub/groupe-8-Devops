@@ -35,18 +35,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+  extract_version:
+    runs-on: ubuntu-latest
+    steps:
       - name: Extract version from last PR title
         id: extract_version
         run: |
+          latest_pr_data=$(curl -s -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" "https://api.github.com/repos/JohannDietrichGitHub/groupe-8-Devops/pulls?state=closed&sort=updated&direction=desc&per_page=100")
           
-          # Récupérer les titres des dernières pull requests fermées
-          latest_pr_titles=$(curl -s -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&sort=updated&direction=desc&per_page=100" | jq -r '.[].title')
-      
+          # Vérifier si la réponse est vide ou non
+          if [[ -z "$latest_pr_data" ]]; then
+            echo "Aucune pull request trouvée ou erreur lors de la récupération des données."
+            exit 1
+          fi
+          
+          # Afficher la réponse pour le débogage
+          echo "Response from GitHub API:"
+          echo "$latest_pr_data"
+          
           # Déclarer la variable pour stocker la version extraite
           version=""
-      
-          # Parcourir les titres des pull requests
-          for title in $latest_pr_titles; do
+          
+          # Extraire le titre de chaque PR et chercher la version
+          for title in $(echo "$latest_pr_data" | jq -r '.[].title'); do
             # Utiliser une expression régulière pour extraire la version au format X.Y.Z
             version=$(echo "$title" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
             # Si une version est trouvée, sortir de la boucle
@@ -54,13 +65,13 @@ jobs:
               break
             fi
           done
-
+          
           # Si aucune version n'est trouvée, définir une version par défaut
           if [[ -z "$version" ]]; then
             version="1.0.0"
           fi
           echo "::set-output name=version::$version"
-
+      
       - name: Extract PR title and labels
         id: pr_info
         run: |
