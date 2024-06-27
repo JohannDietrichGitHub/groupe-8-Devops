@@ -16,7 +16,8 @@ jobs:
 
       - name: Get current branch name
         id: branch-name
-        run: echo "${{ github.head_ref }}"
+        run: |
+          echo "${GITHUB_REF#refs/heads/}"  # Extrait le nom de la branche à partir de GITHUB_REF
       
       - name: Create a new file
         run: |
