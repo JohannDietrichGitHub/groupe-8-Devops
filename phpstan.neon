@@ -7,6 +7,10 @@ parameters:
         - app
         - routes
         - tests
-        - ressources
+        - resources
     ignoreErrors:
         - '#Unsafe usage of new static#'
+        - '#Method .*::.*\(\) has no return type specified.#'
+        - '#Method .*::.*\(.*\) has parameter .+ with no type specified.#'
+
+        

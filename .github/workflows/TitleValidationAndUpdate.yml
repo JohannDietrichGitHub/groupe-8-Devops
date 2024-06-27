@@ -85,13 +85,11 @@ jobs:
               version=$(echo $version | awk -F. '{$3++} 1' OFS=.)
           fi
 
-
           # Mettre à jour le titre de la PR avec la nouvelle version
           new_title="${version} - ${title}"
           
           # Enregistrer la nouvelle valeur de new_title dans un fichier de sortie
           echo "$new_title" > new_title.txt
-
 
       - name: Update PR title
         run: |
@@ -107,3 +105,27 @@ jobs:
             -H "Content-Type: application/json" \
             -d "{\"title\": \"$new_title\"}" \
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${pr_number}"
+
+      - name: Update .env file with new version
+        run: |
+          # Lire la nouvelle version depuis le fichier de sortie
+          version=$(cat version.txt)
+          
+          # Mettre à jour la variable APP_VERSION dans le fichier .env
+          if grep -q "APP_VERSION=" .env; then
+            # Mettre à jour la ligne existante
+            sed -i "s/APP_VERSION=.*/APP_VERSION=$version/" .env
+          else
+            # Ajouter la ligne si elle n'existe pas
+            echo "APP_VERSION=$version" >> .env
+          fi
+
+      - name: Commit and push .env changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .env
+          git commit -m "Update .env with new version $version"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
