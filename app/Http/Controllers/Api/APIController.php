@@ -28,7 +28,7 @@ class APIController extends Controller
 
         // Tableau pour stocker la structure hiérarchique des données
         $result = [
-            'entreprise' => $entreprise->name,
+            'entreprise' => $entreprise->nom,
             'categories' => []
         ];
 
