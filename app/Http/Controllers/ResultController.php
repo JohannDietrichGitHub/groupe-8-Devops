@@ -13,7 +13,7 @@ class ResultController extends Controller
 {
     public function show($id)
     {
-        // Récupérer le titre de l'entreprise
+        // Réupérer le titre de l'entreprise
         $entreprise = Entreprise::find($id);
         $nom = $entreprise->nom;
 
