@@ -30,7 +30,7 @@ jobs:
 
   update_version:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize'
+    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -38,7 +38,7 @@ jobs:
       - name: Extract version from last PR title
         id: extract_version
         run: |
-          latest_pr_titles=$(curl -s -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls?state=closed&sort=updated&direction=desc&per_page=100" | jq -r '.[].title')
+          latest_pr_titles=$(curl -s -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&sort=updated&direction=desc&per_page=100" | jq -r '.[].title')
           version=""
           for title in $latest_pr_titles; do
             version=$(echo "$title" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
@@ -85,13 +85,11 @@ jobs:
               version=$(echo $version | awk -F. '{$3++} 1' OFS=.)
           fi
 
-
           # Mettre à jour le titre de la PR avec la nouvelle version
           new_title="${version} - ${title}"
           
           # Enregistrer la nouvelle valeur de new_title dans un fichier de sortie
           echo "$new_title" > new_title.txt
-
 
       - name: Update PR title
         run: |
@@ -106,4 +104,4 @@ jobs:
             -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d "{\"title\": \"$new_title\"}" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${pr_number}"
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${pr_number}"
