@@ -14,14 +14,14 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
+      - name: Get current branch name
+        id: branch-name
+        run: echo "${{ github.head_ref }}"
+      
       - name: Create a new file
         run: |
           echo "Hello, this is a new file" > newfile.txt
 
-      - name: Get current branch name
-        id: branch-name
-        run: echo "::set-output name=branch::$(echo $GITHUB_REF | awk 'BEGIN {FS="/"} {print $3}')"
-      
       - name: Commit new file using GitHub API
         run: |
           curl -X PUT \
@@ -31,6 +31,5 @@ jobs:
             -d '{
               "message": "Add newfile.txt",
               "content": "'"$(base64 newfile.txt)"'",
-              "branch": "${{ steps.branch-name.outputs.branch }}"
+              "branch": "'"${{ steps.branch-name.outputs.branch }}"'"
             }'
-
