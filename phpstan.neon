@@ -7,6 +7,6 @@ parameters:
         - app
         - routes
         - tests
-        - ressources
+        - resources
     ignoreErrors:
         - '#Unsafe usage of new static#'
