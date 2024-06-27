@@ -30,7 +30,7 @@ jobs:
 
   update_version:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize'
+    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -38,14 +38,26 @@ jobs:
       - name: Extract version from last PR title
         id: extract_version
         run: |
-          latest_pr_titles=$(curl -s -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls?state=closed&sort=updated&direction=desc&per_page=100" | jq -r '.[].title')
+          echo "GitHub Token: ${{ secrets.MY_GITHUB_TOKEN }}"
+          echo "GitHub Repository: ${{ github.repository }}"
+          
+          # Récupérer les titres des dernières pull requests fermées
+          latest_pr_titles=$(curl -s -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&sort=updated&direction=desc&per_page=100" | jq -r '.[].title')
+      
+          # Déclarer la variable pour stocker la version extraite
           version=""
+      
+          # Parcourir les titres des pull requests
           for title in $latest_pr_titles; do
+            # Utiliser une expression régulière pour extraire la version au format X.Y.Z
             version=$(echo "$title" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+            # Si une version est trouvée, sortir de la boucle
             if [[ ! -z "$version" ]]; then
               break
             fi
           done
+
+          # Si aucune version n'est trouvée, définir une version par défaut
           if [[ -z "$version" ]]; then
             version="1.0.0"
           fi
@@ -104,28 +116,4 @@ jobs:
             -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d "{\"title\": \"$new_title\"}" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${pr_number}"
-
-      - name: Update .env file with new version
-        run: |
-          # Lire la nouvelle version depuis le fichier de sortie
-          version=$(cat version.txt)
-          
-          # Mettre à jour la variable APP_VERSION dans le fichier .env
-          if grep -q "APP_VERSION=" .env; then
-            # Mettre à jour la ligne existante
-            sed -i "s/APP_VERSION=.*/APP_VERSION=$version/" .env
-          else
-            # Ajouter la ligne si elle n'existe pas
-            echo "APP_VERSION=$version" >> .env
-          fi
-
-      - name: Commit and push .env changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .env
-          git commit -m "Update .env with new version $version"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${pr_number}"

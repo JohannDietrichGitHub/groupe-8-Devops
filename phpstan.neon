@@ -9,8 +9,12 @@ parameters:
         - tests
         - resources
     ignoreErrors:
-        - '#Unsafe usage of new static#'
         - '#Method .*::.*\(\) has no return type specified.#'
         - '#Method .*::.*\(.*\) has parameter .+ with no type specified.#'
+        - '#Cannot access property .+ on .+\|null.#'
+        - '#PHPDoc type array<int, string> of property .+ is not covariant with PHPDoc type list<string> of overridden property .+#'
+        - '#Undefined variable: \$this#'
+        - '#Call to method PHPUnit\\\\Framework\\\\Assert::assertTrue\(\) with true will always evaluate to true.#'
 
-        
+        includes:
+    - vendor/nunomaduro/larastan/extension.neon
