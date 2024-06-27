@@ -1,0 +1,31 @@
+name: Create File and Commit
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  create-file-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Set up Git user
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+
+      - name: Create a new file
+        run: echo "Hello, this is a new file" > newfile.txt
+
+      - name: Commit and push changes
+        run: |
+          git add newfile.txt
+          git commit -m "Add newfile.txt"
+          git push origin ${{ github.head_ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
