@@ -54,7 +54,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    command: ["--log-bin=mysql-bin", "--binlog-format=ROW", "--server-id=1", "/etc/scripts/setup-master.sh"]
+    command: ["--log-bin=mysql-bin", "--binlog-format=ROW", "--server-id=1"]
     restart: unless-stopped
 
   phpmyadmin:
