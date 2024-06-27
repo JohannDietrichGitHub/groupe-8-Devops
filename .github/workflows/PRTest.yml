@@ -34,6 +34,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all branches
+        run: |
+          git fetch --all
+
+      - name: Checkout pull request branch
+        run: |
+          git checkout ${{ github.head_ref }}
 
       - name: Debug API Response
         run: |
@@ -140,4 +150,4 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .env.exemple
           git commit -m "Update APP_VERSION to $version"
-          git push origin ${{ github.head_ref }}
+          git push origin "HEAD:${{ github.head_ref }}"
