@@ -3,14 +3,15 @@
 @include('partials.head', ['title' => $title ?? 'Titre'])
 
 @include('partials.header')
-<body>
-<div class="container">
-    <h1>Résultats de l'entreprise : {{$title}} avec id {{$id}}</h1>
 
-    @php
+<body>
+    <div class="container">
+        <h1>Résultats de l'entreprise : {{$title}} avec id {{$id}}</h1>
+
+        @php
         function renderQuestionsTable($questions, $axeName, $id) {
             $previousGroupeId = null;
-            echo '<h1>' . $axeName . '</h1>';
+            echo '<h2>' . $axeName . '</h2>';
             echo '<table class="table table-striped">';
             echo '<thead>';
             echo '<tr>';
@@ -36,40 +37,37 @@
             echo '</tbody>';
             echo '</table>';
         }
-    @endphp
+        @endphp
 
-    @php
+        @php
         function renderBilanTable($category, $id) {
             $groupes = \App\Models\Groupe::getGroupesByCategory($category);
-            echo '<h1 class="mt-4">Bilan ' . ucfirst($category) . ' :</h1>';
-            echo '<table class="table">';
-            echo '<thead class="thead-dark">';
-            echo '<tr>';
-            echo '<th scope="col">Groupe</th>';
-            echo '<th scope="col">Total Score</th>';
-            echo '</tr>';
-            echo '</thead>';
-            echo '<tbody>';
+            echo '<h2 class="mt-4">Bilan ' . ucfirst($category) . ' :</h2>';
+            echo '<div class="content">';
             foreach ($groupes as $groupe) {
-                echo '<tr>';
-                echo '<td>' . $groupe->nom . '</td>';
-                echo '<td>' . \App\Models\Groupe::getTotalScoreByGroupeIdAndEntrepriseId($groupe->id, $id) . '</td>';
-                echo '</tr>';
+                $questions = \App\Models\Question::where('groupe_id', $groupe->id)->get();
+                $totalScore = \App\Models\Groupe::getTotalScoreByGroupeIdAndEntrepriseId($groupe->id, $id);
+                $maxScore = count($questions) * 2; // Chaque question a un score de 0, 1 ou 2
+
+                echo '<p>' . $groupe->nom . '</p>';
+                echo '<progress class="progress is-primary" value="' . $totalScore . '" max="' . $maxScore . '">' . ($totalScore / $maxScore * 100) . '%</progress>';
             }
-            echo '</tbody>';
-            echo '</table>';
+            echo '</div>';
         }
-    @endphp
+@endphp
 
-    @php renderQuestionsTable($questionsComp, 'Axe compétences', $id); @endphp
-    @php renderBilanTable('competence', $id); @endphp
 
-    @php renderQuestionsTable($questionsReact, 'Axe réactivité', $id); @endphp
-    @php renderBilanTable('reactivite', $id); @endphp
+        @php renderQuestionsTable($questionsComp, 'Axe compétences', $id); @endphp
+        @php renderBilanTable('competence', $id); @endphp
 
-    @php renderQuestionsTable($questionsNum, 'Axe numérique', $id); @endphp
-    @php renderBilanTable('numerique', $id); @endphp
-</div>
+        @php renderQuestionsTable($questionsReact, 'Axe réactivité', $id); @endphp
+        @php renderBilanTable('reactivite', $id); @endphp
+
+        @php renderQuestionsTable($questionsNum, 'Axe numérique', $id); @endphp
+        @php renderBilanTable('numerique', $id); @endphp
+    </div>
 </body>
+
 @include('partials.footer')
+
 </html>
